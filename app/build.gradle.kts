@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -15,6 +16,9 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+
+        val tmdbBearer: String = (project.findProperty("TMDB_BEARER_TOKEN") as? String) ?: ""
+        buildConfigField("String", "TMDB_BEARER_TOKEN", "\"$tmdbBearer\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -40,6 +44,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
