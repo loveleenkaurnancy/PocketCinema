@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +7,15 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
+
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        load(file.inputStream())
+    }
+}
+
+val tmdbBearer: String = localProperties.getProperty("TMDB_BEARER_TOKEN") ?: ""
 
 android {
     namespace = "com.pocketcinema"
@@ -17,7 +28,6 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        val tmdbBearer: String = (project.findProperty("TMDB_BEARER_TOKEN") as? String) ?: ""
         buildConfigField("String", "TMDB_BEARER_TOKEN", "\"$tmdbBearer\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
