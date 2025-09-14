@@ -11,5 +11,7 @@ data class MovieEntity(
     val posterPath: String?,
     val backdropPath: String?,
     val releaseDate: String?,
-    val isBookmarked: Boolean = false
+    val voteAverage: String?,
+    val isBookmarked: Boolean = false,
+    val category: String
 )

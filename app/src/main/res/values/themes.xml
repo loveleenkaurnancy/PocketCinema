@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.PocketCinema" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Set the same background color as your app's background -->
+        <item name="android:windowBackground">@color/color_121213</item>
+        <!-- Or use a drawable if needed -->
+        <!-- <item name="android:windowBackground">@drawable/window_background</item> -->
+    </style>
 
-    <style name="Theme.PocketCinema" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Splash Theme for Android 12+ -->
+    <style name="Theme.PocketCinema.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/color_121213</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.PocketCinema</item>
+
+        <!-- Hide action bar in splash theme too -->
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
 </resources>

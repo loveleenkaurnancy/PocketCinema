@@ -91,6 +91,12 @@ dependencies {
     // Coil (images)
     implementation(libs.coil.compose)
 
+    // Material
+    implementation(libs.material)
+
+    // Splash Screen
+    implementation(libs.splashscreen)
+
     // Unit tests
     testImplementation(libs.junit)
 

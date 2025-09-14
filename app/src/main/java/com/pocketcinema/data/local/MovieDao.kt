@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MovieDao {
 
-    @Query("SELECT * FROM movies ORDER BY releaseDate DESC")
-    fun getAllMovies(): Flow<List<MovieEntity>>
+    @Query("SELECT * FROM movies WHERE category = :category ORDER BY releaseDate DESC")
+    fun getMoviesByCategory(category: String): Flow<List<MovieEntity>>
 
     @Query("SELECT * FROM movies WHERE isBookmarked = 1")
     fun getBookmarkedMovies(): Flow<List<MovieEntity>>

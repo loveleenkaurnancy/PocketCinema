@@ -7,6 +7,7 @@ import com.pocketcinema.data.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,6 +22,9 @@ class HomeViewModel @Inject constructor(
     private val _topRated = MutableStateFlow<List<MovieEntity>>(emptyList())
     val topRated: StateFlow<List<MovieEntity>> = _topRated
 
+    private val _searchResults = MutableStateFlow<List<MovieEntity>>(emptyList())
+    val searchResults: StateFlow<List<MovieEntity>> = _searchResults
+
     init {
         loadNowPlaying()
         loadTopRated()
@@ -28,7 +32,7 @@ class HomeViewModel @Inject constructor(
 
     private fun loadNowPlaying() {
         viewModelScope.launch {
-            repository.getNowPlayingMovies().collect { movies ->
+            repository.getNowPlayingMovies().collectLatest { movies ->
                 _nowPlaying.value = movies
             }
         }
@@ -36,8 +40,20 @@ class HomeViewModel @Inject constructor(
 
     private fun loadTopRated() {
         viewModelScope.launch {
-            repository.getTopRatedMovies().collect { movies ->
+            repository.getTopRatedMovies().collectLatest { movies ->
                 _topRated.value = movies
+            }
+        }
+    }
+
+    fun searchMovies(query: String) {
+        viewModelScope.launch {
+            if (query.isBlank()) {
+                _searchResults.value = emptyList()
+            } else {
+                repository.searchMovies(query).collectLatest { movies ->
+                    _searchResults.value = movies
+                }
             }
         }
     }

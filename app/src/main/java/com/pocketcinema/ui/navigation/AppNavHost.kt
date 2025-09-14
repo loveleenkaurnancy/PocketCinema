@@ -1,7 +1,6 @@
 package com.pocketcinema.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,6 +19,9 @@ fun PocketCinemaNavHost() {
             HomeScreen(
                 onMovieClick = { movieId ->
                     navController.navigate(NavRoutes.Details.createRoute(movieId))
+                },
+                onBookmarksClick = {
+                    navController.navigate(NavRoutes.Bookmarks.route)
                 }
             )
         }

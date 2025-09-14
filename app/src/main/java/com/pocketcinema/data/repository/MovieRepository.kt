@@ -13,63 +13,111 @@ class MovieRepository @Inject constructor(
     private val dao: MovieDao
 ) {
     fun getNowPlayingMovies(): Flow<List<MovieEntity>> = flow {
-        // Load from network
-        val response = api.getNowPlaying()
-        val entities = response.results.map { dto ->
-            MovieEntity(
-                id = dto.id,
-                title = dto.title,
-                overview = dto.overview,
-                posterPath = dto.poster_path,
-                backdropPath = dto.backdrop_path,
-                releaseDate = dto.release_date
-            )
+        try {
+            val response = api.getNowPlaying()
+            val entities = response.results.map { dto ->
+                MovieEntity(
+                    id = dto.id,
+                    title = dto.title,
+                    overview = dto.overview,
+                    posterPath = dto.poster_path,
+                    backdropPath = dto.backdrop_path,
+                    releaseDate = dto.release_date,
+                    voteAverage = dto.vote_average,
+                    category = "now_playing"
+                )
+            }
+            dao.insertMovies(entities)
         }
-        dao.insertMovies(entities)
-
-        // Emit from DB (cached)
-        emit(dao.getAllMovies().first())
+        catch (e: Exception) {
+            e.printStackTrace()
+        }
+        emit(dao.getMoviesByCategory("now_playing").first())
     }
 
     fun getTopRatedMovies(): Flow<List<MovieEntity>> = flow {
-        val response = api.getTopRated()
-        val entities = response.results.map { dto ->
-            MovieEntity(
-                id = dto.id,
-                title = dto.title,
-                overview = dto.overview,
-                posterPath = dto.poster_path,
-                backdropPath = dto.backdrop_path,
-                releaseDate = dto.release_date
-            )
+        try {
+            val response = api.getTopRated()
+            val entities = response.results.map { dto ->
+                MovieEntity(
+                    id = dto.id,
+                    title = dto.title,
+                    overview = dto.overview,
+                    posterPath = dto.poster_path,
+                    backdropPath = dto.backdrop_path,
+                    releaseDate = dto.release_date,
+                    voteAverage = dto.vote_average,
+                    category = "top_rated"
+                )
+            }
+            dao.insertMovies(entities)
         }
-        dao.insertMovies(entities)
-
-        emit(dao.getAllMovies().first())
+        catch (e: Exception) {
+            e.printStackTrace()
+        }
+        emit(dao.getMoviesByCategory("top_rated").first())
     }
 
-    fun getBookmarkedMovies(): Flow<List<MovieEntity>> = dao.getBookmarkedMovies()
+    fun getBookmarkedMovies(): Flow<List<MovieEntity>> =
+        dao.getBookmarkedMovies()
 
     suspend fun setBookmark(movieId: Int, bookmarked: Boolean) {
         dao.updateBookmark(movieId, bookmarked)
     }
 
     suspend fun getMovieDetails(id: Int): MovieEntity? {
-        // First try DB
         val local = dao.getMovieById(id)
         if (local != null) return local
 
-        // Else fetch from network
-        val dto = api.getMovieDetails(id)
-        val entity = MovieEntity(
-            id = dto.id,
-            title = dto.title,
-            overview = dto.overview,
-            posterPath = dto.poster_path,
-            backdropPath = dto.backdrop_path,
-            releaseDate = dto.release_date
-        )
-        dao.insertMovie(entity)
-        return entity
+        return try {
+            val dto = api.getMovieDetails(id)
+            val entity = MovieEntity(
+                id = dto.id,
+                title = dto.title,
+                overview = dto.overview,
+                posterPath = dto.poster_path,
+                backdropPath = dto.backdrop_path,
+                releaseDate = dto.release_date,
+                voteAverage = dto.vote_average,
+                category = "details"
+            )
+            dao.insertMovie(entity)
+            entity
+        } catch (e: Exception) {
+            println("Network error: ${e.message}")
+            null
+        }
+    }
+
+    fun searchMovies(query: String): Flow<List<MovieEntity>> = flow {
+        if (query.isBlank()) {
+            emit(emptyList())
+            return@flow
+        }
+
+        try {
+            val response = api.searchMovies(
+                query = query
+            )
+
+            val entities = response.results.map { dto ->
+                MovieEntity(
+                    id = dto.id,
+                    title = dto.title,
+                    overview = dto.overview,
+                    posterPath = dto.poster_path,
+                    backdropPath = dto.backdrop_path,
+                    releaseDate = dto.release_date,
+                    voteAverage = dto.vote_average,
+                    category = "search"
+                )
+            }
+
+            emit(entities)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emit(emptyList())
+        }
     }
 }
