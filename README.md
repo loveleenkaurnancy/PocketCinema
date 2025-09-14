@@ -112,17 +112,3 @@ com.pocketcinema
 <img width="270" height="600" alt="3" src="https://github.com/user-attachments/assets/71b26b66-3bfd-42db-b8e0-9fee16c747e9" />
 <img width="270" height="600" alt="4" src="https://github.com/user-attachments/assets/a91ae4bd-5f00-4728-ae08-49caf14e1c16" />
 <img width="270" height="600" alt="5" src="https://github.com/user-attachments/assets/03faf0ac-28ed-46ca-bc4a-9f9bdb9e61cd" />
-
-
----
-
-## Future Improvements
-
-* Add movie trailers using YouTube API.
-* Dark/Light theme toggle.
-
----
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
