@@ -1,11 +1,13 @@
 package com.pocketcinema.data.repository
 
+import android.util.Log
 import com.pocketcinema.data.local.MovieDao
 import com.pocketcinema.data.local.MovieEntity
 import com.pocketcinema.data.remote.TmdbApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 class MovieRepository @Inject constructor(
@@ -24,7 +26,8 @@ class MovieRepository @Inject constructor(
                     backdropPath = dto.backdrop_path,
                     releaseDate = dto.release_date,
                     voteAverage = dto.vote_average,
-                    category = "now_playing"
+                    category = "now_playing",
+                    isBookmarked = false
                 )
             }
             dao.insertMovies(entities)
@@ -47,7 +50,8 @@ class MovieRepository @Inject constructor(
                     backdropPath = dto.backdrop_path,
                     releaseDate = dto.release_date,
                     voteAverage = dto.vote_average,
-                    category = "top_rated"
+                    category = "top_rated",
+                    isBookmarked = false
                 )
             }
             dao.insertMovies(entities)
@@ -58,8 +62,12 @@ class MovieRepository @Inject constructor(
         emit(dao.getMoviesByCategory("top_rated").first())
     }
 
-    fun getBookmarkedMovies(): Flow<List<MovieEntity>> =
-        dao.getBookmarkedMovies()
+    fun getBookmarkedMovies(): Flow<List<MovieEntity>> {
+        return dao.getBookmarkedMovies()
+            .onEach { movies ->
+                Log.d("DBCheck", "Bookmarked movies in DB: ${movies.map { it.isBookmarked }}")
+            }
+    }
 
     suspend fun setBookmark(movieId: Int, bookmarked: Boolean) {
         dao.updateBookmark(movieId, bookmarked)

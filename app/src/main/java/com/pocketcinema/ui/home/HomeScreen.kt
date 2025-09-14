@@ -79,6 +79,11 @@ fun HomeScreen(
                     tint = Color.Gray
                 )
             },
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                focusedContainerColor = Color(0xFF121213),
+                unfocusedContainerColor = Color(0xFF121213)
+            ),
             singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
@@ -96,23 +101,26 @@ fun HomeScreen(
             )
             MovieRow(movies = searchResults, onMovieClick = onMovieClick)
         } else {
-            Text(
-                text = "Now Playing",
-                style = MaterialTheme.typography.titleMedium,
-                color = Color.White,
-                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
-            )
-            MovieRow(movies = nowPlaying, onMovieClick = onMovieClick)
+            if (nowPlaying.isNotEmpty()) {
+                Text(
+                    text = "Now Playing",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White,
+                    modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
+                )
+                MovieRow(movies = nowPlaying, onMovieClick = onMovieClick)
+                Spacer(Modifier.height(24.dp))
+            }
 
-            Spacer(Modifier.height(24.dp))
-
-            Text(
-                text = "Top Rated",
-                style = MaterialTheme.typography.titleMedium,
-                color = Color.White,
-                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
-            )
-            MovieRow(movies = topRated, onMovieClick = onMovieClick)
+            if (topRated.isNotEmpty()) {
+                Text(
+                    text = "Top Rated",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White,
+                    modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
+                )
+                MovieRow(movies = topRated, onMovieClick = onMovieClick)
+            }
         }
     }
 }

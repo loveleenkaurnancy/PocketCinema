@@ -12,7 +12,7 @@ interface MovieDao {
     @Query("SELECT * FROM movies WHERE isBookmarked = 1")
     fun getBookmarkedMovies(): Flow<List<MovieEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMovies(movies: List<MovieEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
